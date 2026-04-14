@@ -1,13 +1,5 @@
 ---
-title: "Stata + R Integration: Regional Analysis"
-author: ""
-date: today
-format:
-  html:
-    toc: true
-    toc-depth: 3
-    code-fold: false
-    embed-resources: true
+title: "Stata + R Integration: in Quarto"
 ---
 
 <!--
