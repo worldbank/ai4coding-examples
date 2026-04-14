@@ -1,0 +1,10 @@
+
+# Making sure data does not make it to GitHub.
+
+01-raw/
+02-interim/
+03-processed/
+
+# Making sure that .gitkeep is NOT ignored (always comitted to GitHub)
+# from all subfolders of data.
+!**/.gitkeep
