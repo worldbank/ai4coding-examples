@@ -1,0 +1,304 @@
+---
+title: "Exploring the Palmer Penguins Dataset"
+author: "Test Notebook"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-title: "Contents"
+    code-fold: true
+    code-summary: "Show code"
+    theme: cosmo
+    highlight-style: github
+    embed-resources: true
+execute:
+  warning: false
+  message: false
+---
+
+## Overview
+
+This notebook explores the [Palmer Penguins](https://allisonhorst.github.io/palmerpenguins/)
+dataset — a modern alternative to the classic `iris` dataset — collected by Dr. Kristen Gorman
+at the Palmer Station, Antarctica.
+
+The dataset contains size measurements for **344 penguins** across three species
+(*Adélie*, *Chinstrap*, and *Gentoo*) observed on three islands in the Palmer Archipelago.
+
+::: {layout="[1,2,2]" layout-valign="center"}
+![](https://allisonhorst.github.io/palmerpenguins/reference/figures/palmerpenguins.png){width=130 fig-alt="palmerpenguins hex sticker"}
+
+![Meet the Palmer penguins — Adélie, Chinstrap and Gentoo](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png){fig-alt="Illustration of the three penguin species: Adélie, Chinstrap and Gentoo"}
+
+![Bill (culmen) length and depth measurements](https://allisonhorst.github.io/palmerpenguins/reference/figures/culmen_depth.png){fig-alt="Diagram showing how bill length and bill depth are measured on a penguin"}
+:::
+
+*Artwork by [\@allison_horst](https://www.allisonhorst.com/) — CC BY 4.0*
+
+::: {.callout-note}
+## Dataset Citation
+Gorman KB, Williams TD, Fraser WR (2014). *Ecological sexual dimorphism and environmental
+variability within a community of Antarctic penguins (genus Pygoscelis)*.
+PLoS ONE 9(3):e90081.
+:::
+
+---
+
+## Setup
+
+We begin by verifying that all required packages are available, installing any that are
+missing, and then loading them.
+
+```{r}
+#| label: setup
+#| code-summary: "Package management and library loading"
+
+required_pkgs <- c("tidyverse", "ggplot2", "palmerpenguins", "broom", "knitr")
+
+missing_pkgs <- required_pkgs[!sapply(required_pkgs, requireNamespace, quietly = TRUE)]
+
+if (length(missing_pkgs) > 0) {
+  message("Installing: ", paste(missing_pkgs, collapse = ", "))
+  install.packages(missing_pkgs, repos = "https://cloud.r-project.org")
+}
+
+library(tidyverse)
+library(palmerpenguins)
+library(broom)
+library(knitr)
+```
+
+---
+
+## Data
+
+### Structure
+
+The `penguins` data frame ships directly with the `palmerpenguins` package and is
+ready to use after loading.
+
+```{r}
+#| label: tbl-glimpse
+#| tbl-cap: "First six rows of the penguins dataset."
+kable(head(penguins))
+```
+
+```{r}
+#| label: data-clean
+penguins_clean <- penguins |> drop_na()
+```
+
+After removing `r nrow(penguins) - nrow(penguins_clean)` rows with missing values,
+`r nrow(penguins_clean)` complete observations remain across
+`r n_distinct(penguins_clean$species)` species and
+`r n_distinct(penguins_clean$island)` islands.
+
+### Summary statistics
+
+```{r}
+#| label: tbl-summary
+#| tbl-cap: "Per-species summary of key morphometric variables."
+penguins_clean |>
+  summarise(
+    across(
+      c(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g),
+      list(mean = \(x) round(mean(x), 1), sd = \(x) round(sd(x), 1))
+    ),
+    .by = species
+  ) |>
+  kable()
+```
+
+::: {.callout-tip}
+## Simpson's Paradox
+The overall correlation between bill length and bill depth is *negative*, but
+**positive within each species**. This is a textbook example of Simpson's Paradox —
+a strong reason to always disaggregate by group before drawing conclusions.
+:::
+
+---
+
+## Visualisations
+
+### Bill Dimensions by Species {#sec-scatter}
+
+@fig-scatter shows the relationship between bill length and bill depth stratified by
+species, with per-species linear fits. The three species cluster distinctly,
+illustrating that species is a strong predictor of morphology.
+
+```{r}
+#| label: fig-scatter
+#| fig-cap: "Bill length vs. bill depth coloured and fitted by species."
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(
+  penguins_clean,
+  aes(x = bill_length_mm, y = bill_depth_mm, colour = species, shape = species)
+) +
+  geom_point(alpha = 0.7, size = 2.5) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.9) +
+  scale_colour_manual(values = c("darkorange", "purple", "cyan4")) +
+  scale_shape_manual(values = c(16, 17, 15)) +
+  labs(
+    title    = "Bill length vs. bill depth",
+    subtitle = "Linear fit per species — note the within-group positive trend",
+    x        = "Bill length (mm)",
+    y        = "Bill depth (mm)",
+    colour   = "Species", shape = "Species"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+### Flipper Length Distribution {#sec-hist}
+
+The histogram in @fig-hist reveals that Gentoo penguins have notably longer flippers
+than Adélie or Chinstrap penguins, hinting at their larger overall body size.
+
+```{r}
+#| label: fig-hist
+#| fig-cap: "Overlaid histogram of flipper length for each species."
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(penguins_clean, aes(x = flipper_length_mm, fill = species)) +
+  geom_histogram(alpha = 0.6, binwidth = 5, position = "identity", colour = "white") +
+  scale_fill_manual(values = c("darkorange", "purple", "cyan4")) +
+  labs(
+    title = "Distribution of flipper length",
+    x     = "Flipper length (mm)",
+    y     = "Count",
+    fill  = "Species"
+  ) +
+  theme_minimal(base_size = 13)
+```
+
+### Body Mass by Species and Sex {#sec-box}
+
+@fig-box uses box plots to visualise body mass split by both species and sex.
+Sexual dimorphism is most pronounced in Gentoo penguins, where males are
+substantially heavier than females.
+
+```{r}
+#| label: fig-box
+#| fig-cap: "Box plots of body mass grouped by species and sex."
+#| fig-width: 8
+#| fig-height: 5
+
+ggplot(penguins_clean, aes(x = species, y = body_mass_g, fill = sex)) +
+  geom_boxplot(alpha = 0.7, outlier.shape = 21, outlier.size = 2) +
+  scale_fill_manual(values = c("steelblue", "tomato"), labels = c("Female", "Male")) +
+  labs(
+    title = "Body mass by species and sex",
+    x     = "Species",
+    y     = "Body mass (g)",
+    fill  = "Sex"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(legend.position = "top")
+```
+
+### Faceted Bill Dimensions by Island {#sec-facet}
+
+The faceted plot in @fig-facet breaks the bill dimension scatter down by island.
+The composition of species varies strikingly across islands — Biscoe hosts almost
+exclusively Gentoo penguins, while Dream has a mix of Adélie and Chinstrap.
+
+```{r}
+#| label: fig-facet
+#| fig-cap: "Bill length vs. depth faceted by island of observation."
+#| fig-width: 11
+#| fig-height: 4.5
+
+ggplot(
+  penguins_clean,
+  aes(x = bill_length_mm, y = bill_depth_mm, colour = species, shape = species)
+) +
+  geom_point(alpha = 0.7, size = 2) +
+  facet_wrap(~island, nrow = 1) +
+  scale_colour_manual(values = c("darkorange", "purple", "cyan4")) +
+  scale_shape_manual(values = c(16, 17, 15)) +
+  labs(
+    title    = "Bill dimensions faceted by island",
+    subtitle = "Species composition differs markedly across islands",
+    x        = "Bill length (mm)",
+    y        = "Bill depth (mm)",
+    colour   = "Species", shape = "Species"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.spacing = unit(1.2, "lines"),
+    strip.text    = element_text(face = "bold", size = 12)
+  )
+```
+
+---
+
+## Regression Analysis {#sec-regression}
+
+We fit an ordinary least squares model predicting **body mass** from flipper length,
+bill dimensions, and species. This allows us to ask: *after controlling for species,
+how much of the variation in body mass is explained by morphometric measurements?*
+
+$$
+\text{body mass}_i = \beta_0 + \beta_1\,\text{flipper} + \beta_2\,\text{bill length} + \beta_3\,\text{bill depth} + \beta_4\,\text{species} + \varepsilon_i
+$$
+
+```{r}
+#| label: tbl-model
+#| tbl-cap: "OLS regression results: body mass as outcome."
+
+model <- lm(
+  body_mass_g ~ flipper_length_mm + bill_length_mm + bill_depth_mm + species,
+  data = penguins_clean
+)
+
+tidy(model, conf.int = TRUE) |>
+  mutate(across(where(is.numeric), \(x) round(x, 3))) |>
+  rename(
+    Term         = term,
+    Estimate     = estimate,
+    `Std. Error` = std.error,
+    `t value`    = statistic,
+    `p value`    = p.value,
+    `CI Lower`   = conf.low,
+    `CI Upper`   = conf.high
+  ) |>
+  kable()
+```
+
+```{r}
+#| label: model-fit
+#| echo: false
+s <- summary(model)
+```
+
+The model explains **`r round(s$adj.r.squared * 100, 1)`%** of the variance in body mass
+(adjusted R² = `r round(s$adj.r.squared, 3)`), with a residual standard error of
+`r round(s$sigma, 0)` g. Every additional millimetre of flipper length is associated with
+roughly `r round(coef(model)["flipper_length_mm"], 1)` g of additional body mass,
+holding bill dimensions and species constant.
+
+::: {.callout-important}
+## Collinearity Note
+Flipper length, bill dimensions, and species are correlated predictors. The individual
+coefficient estimates should be interpreted cautiously — the model is best used
+for overall prediction rather than inferring causal effects of individual measurements.
+:::
+
+---
+
+## Summary
+
+This notebook demonstrated a complete workflow with the Palmer Penguins dataset:
+
+| Step | Output |
+|------|--------|
+| Package management | Installed and loaded `tidyverse`, `palmerpenguins`, `broom` |
+| Data cleaning | Dropped `r nrow(penguins) - nrow(penguins_clean)` rows with NAs |
+| Scatter plot | Bill length vs. depth with per-species fits (@fig-scatter) |
+| Histogram | Flipper length distributions overlaid by species (@fig-hist) |
+| Box plot | Body mass by species × sex (@fig-box) |
+| Faceted scatter | Bill dimensions across islands (@fig-facet) |
+| Regression | Body mass ~ morphometrics + species (Adj. R² ≈ `r round(s$adj.r.squared, 2)`) |

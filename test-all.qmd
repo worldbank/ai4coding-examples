@@ -1,0 +1,67 @@
+---
+title: "Stata + R Integration: Regional Analysis"
+author: ""
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    embed-resources: true
+---
+
+<!--
+================================================================================
+FULL SCRIPT ROADMAP
+================================================================================
+
+PART 1 — STATA
+  1.1  Load raw microdata (use "path/to/data.dta", clear)
+  1.2  Summary statistics
+         - summarize key variables
+         - tabulate categorical variables
+  1.3  Box plot of outcome variable by region (graph box ...)
+  1.4  Lorenz curve + Gini coefficient (ssc install lorenz, then: lorenz ...)
+  1.5  Aggregate to subregional level
+         - collapse (mean) (sum) ..., by(region subregion)
+  1.6  Export subregional CSV
+         - export delimited "output/subregional_data.csv", replace
+
+PART 2 — R
+  2.1  Install / load packages: tidyverse, sf, tmap / ggplot2 + ggspatial
+  2.2  Load subregional CSV produced by Stata
+  2.3  Load shapefile (st_read)
+  2.4  Join CSV data to shapefile on region/subregion key
+  2.5  Map 1: choropleth of statistic A (e.g. mean income)
+  2.6  Map 2: choropleth of statistic B (e.g. Gini / share)
+  2.7  Arrange maps side by side (patchwork or tmap_arrange)
+  2.8  Save output (tmap_save / ggsave)
+
+================================================================================
+-->
+
+# Part 1: Stata — Load Data, EDA & Export
+
+## 1.1 Load Data
+
+```{stata}
+* TODO: replace with actual path
+* use "path/to/your/data.dta", clear
+
+* --- PLACEHOLDER SNIPPET: synthetic data for testing ---
+clear
+set obs 200
+set seed 42
+
+gen region     = ceil(_n / 50)                          // 4 regions
+gen subregion  = ceil(_n / 10)                          // 20 subregions
+gen income     = exp(rnormal(8, 0.6))                   // log-normal income
+gen weight     = runiform(0.5, 2)                       // sampling weights
+
+label var region    "Region (1-4)"
+label var subregion "Subregion (1-20)"
+label var income    "Household income"
+label var weight    "Sampling weight"
+
+list in 1/5
+```
