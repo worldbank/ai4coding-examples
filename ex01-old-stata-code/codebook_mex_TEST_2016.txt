@@ -1,0 +1,202 @@
+============================================================
+ TEST CODEBOOK: Mexico HH Survey 2016
+ Generated: 15 Apr 2026 09:33:41
+ BASE PATH: C:\Users\wb532966\OneDrive - WBG\AI\AI-course-2026-April\ai4coding-data\mex\2016
+============================================================
+
+  FILE : agro.dta
+  Obs  : 13806   |   Vars: 56
+  --------------------------------------------------------------------------------
+  Variable                   Type            Label (original)
+  --------------------------------------------------------------------------------
+  folioviv                   str10           Identificador de la vivienda
+  foliohog                   str1            Identificador del hogar
+  numren                     str2            Identificador de la persona
+  id_trabajo                 str1            Identificador del trabajo
+  tipoact                    str1            Tipo de actividad
+  cose_cria                  str1            Cosecha o cría
+  prep_deriv                 str1            Preparación o derivados
+  otro_pago                  str1            Forma de pago alterna
+  fpago_1                    str1            Domiciliación
+  fpago_2                    str1            Transferencia electrónica de fondos
+  fpago_3                    str1            Tarjeta de crédito
+  fpago_4                    str1            Tarjeta de débito
+  fpago_5                    str1            Cheque
+  fpago_6                    str1            Vale
+  fpago_7                    str1            Pago móvil
+  fpago_8                    str1            Otra forma de pago
+  nofpago                    str1            No acepta forma de pago alterna
+  t_emp                      double          Personal total
+  h_emp                      double          Personal hombres
+  m_emp                      double          Personal mujeres
+  t_cpago                    double          Personal con pago
+  h_cpago                    double          Hombres con pago
+  m_cpago                    double          Mujeres con pago
+  t_ispago                   double          Integrantes del hogar sin pago
+  h_ispago                   double          Hombres integrantes sin pago
+  m_ispago                   double          Mujeres integrantes sin pago
+  t_nispago                  double          No integrantes del hogar sin pago
+  h_nispago                  double          Hombres no integrantes sin pago
+  m_nispago                  double          Mujeres no integrantes sin pago
+  valrema                    double          Valor de productos en remanente
+  valproc                    double          Valor de productos en proceso
+  apoyo                      str1            Apoyo para los negocios
+  apoyo_1                    double          Apoyo de gobierno federal con pago
+  apoyo_2                    double          Apoyo de gobierno estatal con pago
+  apoyo_3                    double          Apoyo de gobierno municipal con pago
+  apoyo_4                    double          Apoyo de gobierno federal sin pago
+  apoyo_5                    double          Apoyo de gobierno estatal sin pago
+  apoyo_6                    double          Apoyo de gobierno municipal sin pago
+  apoyo_7                    double          Apoyo no gubernamental con pago
+  apoyo_8                    double          Apoyo no gubernamental sin pago
+  procampo                   double          Apoyo PROCAMPO
+  mesproc                    str2            Mes PROCAMPO
+  progan                     double          Apoyo del PROGAN
+  mesprogan                  str2            Mes PROGAN
+  reg_not                    str1            Registro ante notario
+  reg_cont                   str1            Registro contable
+  ventas                     double          Ingreso por ventas
+  autocons                   double          Autoconsumo del hogar
+  otrosnom                   double          Otros montos no monetarios
+  gasneg                     double          Gasto del negocio
+  ventas_tri                 double          Ingreso trimestral por ventas
+  auto_tri                   double          Autoconsumo trimestral
+  otros_tri                  double          Otros montos trimestral
+  gasto_tri                  double          Gasto negocio trimestral
+  ing_tri                    double          Ingreso trimestral
+  ero_tri                    double          Erogación trimestral
+
+
+  FILE : concentradohogar.dta
+  Obs  : 70311   |   Vars: 127
+  --------------------------------------------------------------------------------
+  Variable                   Type            Label (original)
+  --------------------------------------------------------------------------------
+  folioviv                   str10           Identificador de la vivienda
+  foliohog                   str1            Identificador del hogar
+  ubica_geo                  str9            Ubicación geográfica
+  ageb                       str5            Área geoestadística básica
+  tam_loc                    str1            Tamaño de localidad
+  est_socio                  str1            Estrato socioeconómico
+  est_dis                    str3            Estrato de diseño muestral
+  upm                        str7            Unidad primaria de muestreo
+  factor                     double          Factor de expansión nuevas proyecciones 2021
+  clase_hog                  str1            Clase de hogar
+  sexo_jefe                  str1            Sexo del jefe del hogar
+  edad_jefe                  double          Edad del jefe del hogar
+  educa_jefe                 str2            Educación formal del jefe del hogar
+  tot_integ                  double          Número de integrantes del hogar
+  hombres                    double          Integrantes del hogar hombres
+  mujeres                    double          Integrantes del hogar mujeres
+  mayores                    double          Integrantes mayores
+  menores                    double          Integrantes menores
+  p12_64                     double          Integrantes de 12 a 64 años
+  p65mas                     double          Integrantes de 65 años y mas
+  ocupados                   double          Número de ocupados
+  percep_ing                 double          Perceptores de ingreso
+  perc_ocupa                 double          Perceptores de ingreso ocupados
+  ing_cor                    double          Ingreso corriente
+  ingtrab                    double          Ingreso por trabajo
+  trabajo                    double          Ingreso por trabajo subordinado
+  sueldos                    double          Sueldos
+  horas_extr                 double          Horas extras
+  comisiones                 double          Comisiones y propinas
+  aguinaldo                  double          Aguinaldo
+  indemtrab                  double          Indemnizaciones
+  otra_rem                   double          Otras remuneraciones
+  remu_espec                 double          Remuneraciones en especie
+  negocio                    double          Ingresos independiente
+  noagrop                    double          Negocios no agropecuarios
+  industria                  double          Negocios industriales
+  comercio                   double          Negocios comerciales
+  servicios                  double          Negocios de servicios
+  agrope                     double          Negocios agropecuarios
+  agricolas                  double          Negocios agrícolas
+  pecuarios                  double          Negocios pecuarios
+  reproducc                  double          Negocios de recolección
+  pesca                      double          Negocios de pesca
+  otros_trab                 double          Otros ingresos por trabajo
+  rentas                     double          Renta de la propiedad
+  utilidad                   double          Ingresos de sociedades
+  arrenda                    double          Arrendamiento
+  transfer                   double          Transferencias
+  jubilacion                 double          Jubilaciones
+  becas                      double          Becas
+  donativos                  double          Donativos
+  remesas                    double          Remesas
+  bene_gob                   double          Beneficios gubernamentales
+  transf_hog                 double          Transferencias de hogares
+  trans_inst                 double          Transferencias de instituciones
+  estim_alqu                 double          Estimación del alquiler
+  otros_ing                  double          Otros ingresos corrientes
+  gasto_mon                  double          Gasto corriente monetario
+  alimentos                  double          Alimentos
+  ali_dentro                 double          Alimentos dentro del hogar
+  cereales                   double          Cereales
+  carnes                     double          Carnes
+  pescado                    double          Pescados y mariscos
+  leche                      double          Leche y derivados
+  huevo                      double          Huevo
+  aceites                    double          Aceites y grasas
+  tuberculo                  double          Tubérculos
+  verduras                   double          Verduras
+  frutas                     double          Frutas
+  azucar                     double          Azúcar y mieles
+  cafe                       double          Café, té y chocolate
+  especias                   double          Especias y aderezos
+  otros_alim                 double          Otros alimentos diversos
+  bebidas                    double          Bebidas
+  ali_fuera                  double          Alimentos fuera del hogar
+  tabaco                     double          Tabaco
+  vesti_calz                 double          Vestido y calzado
+  vestido                    double          Vestido
+  calzado                    double          Calzado y su reparación
+  vivienda                   double          Vivienda
+  alquiler                   double          Alquileres brutos
+  pred_cons                  double          Predial y cuotas
+  agua                       double          Agua
+  energia                    double          Electricidad y combustibles
+  limpieza                   double          Limpieza
+  cuidados                   double          Cuidados de la casa
+  utensilios                 double          Utensilios domésticos
+  enseres                    double          Enseres domésticos
+  salud                      double          Cuidados de la salud
+  atenc_ambu                 double          Atención primaria o ambulatoria
+  hospital                   double          Atención hospitalaria
+  medicinas                  double          Medicamentos sin receta
+  transporte                 double          Transporte
+  publico                    double          Transporte público
+  foraneo                    double          Transporte foráneo
+  adqui_vehi                 double          Adquisición de vehículos
+  mantenim                   double          Mantenimiento de vehículos
+  refaccion                  double          Refacciones para vehículos
+  combus                     double          Combustibles para vehículos
+  comunica                   double          Comunicaciones
+  educa_espa                 double          Educación y esparcimiento
+  educacion                  double          Educación
+  esparci                    double          Esparcimiento
+  paq_turist                 double          Paquetes turísticos
+  personales                 double          Personales
+  cuida_pers                 double          Cuidados personales
+  acces_pers                 double          Accesorios personales
+  otros_gas                  double          Otros gastos diversos
+  transf_gas                 double          Transferencias de gasto
+  percep_tot                 double          Percepciones totales
+  retiro_inv                 double          Retiro de inversiones
+  prestamos                  double          Préstamos
+  otras_perc                 double          Otras percepciones
+  ero_nm_viv                 double          Erogaciones patrimoniales
+  ero_nm_hog                 double          Transferencias no regulares
+  erogac_tot                 double          Erogaciones totales
+  cuota_viv                  double          Cuota por vivienda
+  mater_serv                 double          Servicios y materiales
+  material                   double          Materiales
+  servicio                   double          Servicios de reparación
+  deposito                   double          Depósito de ahorro
+  prest_terc                 double          Préstamos a terceros
+  pago_tarje                 double          Pago por tarjeta de crédito
+  deudas                     double          Pago de deudas
+  balance                    double          Pérdidas del negocio
+  otras_erog                 double          Otras erogaciones
+  smg                        double          Salario mínimo general
+

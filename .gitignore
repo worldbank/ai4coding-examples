@@ -53,3 +53,11 @@ rsconnect/
 _site/*
 
 .DS_Store
+
+# Stata-related files
+**/*.log
+*.dta
+*.csv
+*.png
+*.pdf
+*.xlsx

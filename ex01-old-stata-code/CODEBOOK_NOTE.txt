@@ -1,0 +1,171 @@
+============================================================
+ CODEBOOK NOTE: analysis_2016_2018.do
+ Mexico ENIGH — Modules and Variables Used
+ Generated: April 2026
+============================================================
+
+This note documents which ENIGH modules are loaded and which
+variables are used in each section of analysis_2016_2018.do.
+
+------------------------------------------------------------
+MODULE 1: concentradohogar.dta  (Household-level income)
+Used in: Sections I.A, I.D, II.A, II.D, II.E
+------------------------------------------------------------
+
+  Variable       Type    Description
+  -----------    ------  ------------------------------------------
+  folioviv       str10   Household folio (interview)
+  foliohog       str3    Household folio (within dwelling)
+  factor         double  Expansion factor  [renamed → fac_exp]
+  ubica_geo      str5    Geographic code (state 2-digit prefix)
+  tam_loc        str1    Locality size class (1–5; 5=rural)
+  ing_cor        double  Quarterly household corriente income (MXN)
+  tot_integ      byte    Total household members
+  sexo_jefe      str1    HH head sex (1=male, 2=female)
+  edad_jefe      byte    HH head age (years)
+  menores        byte    Members aged 0–17  [renamed → n_menores in IV]
+  p65mas         byte    Members aged 65+   [renamed → n_mayores in IV]
+
+  Derived variables
+  -----------------
+  edo            str2    State code (substr(ubica_geo,1,2))
+  rural          byte    1 = rural locality (tam_loc=="5")
+  region         byte    Macro-region 1–4 (see label reg_lbl)
+  inc_pc         double  Monthly per capita income 2016, Section I.A
+  ingreso_pc     double  Monthly per capita income 2016, Section I.D
+                         *** NAMING INCONSISTENCY: inc_pc vs ingreso_pc ***
+  income_percap  double  Monthly per capita income 2018, Section II.A
+  income_percap_r double Monthly per capita income 2018, real 2016 MXN
+  pov_ali        byte    Poverty: alimentaria CONEVAL (0/1)
+  pov_cap        byte    Poverty: capacidades CONEVAL (0/1)  [2016 only]
+  pov_pat        byte    Poverty: patrimonio CONEVAL (0/1)
+  pov_215        byte    Poverty: PPP USD 2.15/day (0/1)
+  pov_365        byte    Poverty: PPP USD 3.65/day (0/1)
+  pov_685        byte    Poverty: PPP USD 6.85/day (0/1)
+  log_ingreso_pc double  Log(ingreso_pc + 1) — for density plots
+
+  Poverty lines used (MXN/month/capita)
+  2016 (CONEVAL Q3): alimentaria 1136/812 (urb/rur)
+                     capacidades 1356/992
+                     patrimonio  2143/1545
+  2016 PPP:          2.15=556, 3.65=942, 6.85=1768
+  2018 (CONEVAL):    alimentaria 1248/895
+                     patrimonio  2335/1700
+  2018 PPP:          2.15=1803, 3.65=3059, 6.85=5736
+  CPI deflator:      INPC 2016Q3→2018Q3 = 1.085 (hardcoded)
+
+------------------------------------------------------------
+MODULE 2: poblacion.dta  (Individual-level demographics)
+Used in: Sections I.B, IV, II.B
+------------------------------------------------------------
+
+  Variable       Type    Description
+  -----------    ------  ------------------------------------------
+  folioviv       str10   Household folio (link key)
+  foliohog       str3    Household folio (link key)
+  numren         str2    Individual renglón (link key for trabajos)
+  edad           byte    Age in years
+  sexo           str1    Sex (1=male, 2=female)
+  nivelaprob     str1    Level of education completed
+                         0=none, 1=preschool, 2=primary, 3=secondary,
+                         4=bachillerato, 5=normal básica,
+                         6=post-sec technical, 7=professional,
+                         8=maestría, 9=doctorado
+                         NOTE: stored as single digit "0"–"9", NOT "00"–"09"
+  gradoaprob     str1    Grade completed within level (0–6)
+  trabajo_mp     str1    Worked last month (1=yes, 2=no)
+  act_pnea1      str1    Reason not economically active (1–5)
+  segsoc         str1    Social security affiliation (1=yes)
+
+  Derived variables
+  -----------------
+  grupo_edad     byte    Age group 1–5: 0-11, 12-24, 25-44, 45-64, 65+
+  hombre         byte    1 = male (sexo=="1")
+  grado_n        byte    Numeric grade (destring gradoaprob)
+  anios_educ     byte    Years of formal education (estimated)
+  educ_cat       byte    Education category 1–5 (Section I.B only)
+  trabaja        byte    Employed, prime-age 25–60 (trabajo_mp=="1")
+  inactivo       byte    Inactive, prime-age 25–60
+  desemplea      byte    Unemployed, prime-age 25–60
+  formal         byte    Has social security, prime-age 25–60
+  edad2          double  edad squared (for regression quadratic)
+  trabaja_18     byte    2018 employment indicator (same logic)
+  formal_18      byte    2018 formal employment
+  informal_18    byte    2018 informal (=formal_18==0 & trabaja_18==1)
+
+------------------------------------------------------------
+MODULE 3: trabajos.dta  (Employment/job details)
+Used in: Section IV only
+------------------------------------------------------------
+
+  Variable       Type    Description
+  -----------    ------  ------------------------------------------
+  folioviv       str10   Household folio (link key)
+  foliohog       str3    Household folio (link key)
+  numren         str2    Individual renglón (link key)
+  id_trabajo     str1    Job identifier (1=main job kept)
+  scian          str6    SCIAN 2013 industry code (4-digit used)
+  sinco          str4    SINCO 2011 occupation code (4-digit)
+  htrab          byte    Hours worked per week (main job)
+
+  Merge logic: 1:m on folioviv foliohog numren
+               keep if id_trabajo=="1" | _merge==1
+               (individuals without employment record kept)
+
+  Derived variables
+  -----------------
+  scian_n        int     Numeric SCIAN (destring scian)
+  sector         byte    1=Agropecuario, 2=Manufactura,
+                         3=Comercio, 4=Servicios/Otro
+  sinco_n        int     Numeric SINCO (destring sinco)
+  ocup_cat       byte    1=Directivos, 2=Prof/Tec, 3=Calificado,
+                         4=Operadores, 5=No calificado
+
+------------------------------------------------------------
+REGRESSION DEPENDENT VARIABLE
+------------------------------------------------------------
+
+  log_inc_pc = log(ingreso_pc) if ingreso_pc > 0
+  Source: concentradohogar.dta ingreso_pc (from Section I.D / hh16b)
+  Note: set to missing for HH with zero or negative reported income
+        (~3-4% of prime-age workers). Known ENIGH limitation.
+
+------------------------------------------------------------
+OUTPUT FILES
+------------------------------------------------------------
+
+  ENIGH_output.xlsx     — 7-sheet workbook
+    Sheet1_Demographics  2016 population, age groups, employment
+    Sheet2_Poverty       2016 poverty headcounts, income distribution
+    Sheet3_Inequality    2016 Gini, quintile shares
+    Sheet4_Regs          2016 OLS log-income regressions (6 models)
+    Sheet5_2018          2018 demographics, poverty
+    Sheet6_Comparison    2016 vs 2018 cross-section comparison
+    Sheet0_Dashboard     Summary panel (written last; ends up last tab)
+
+  fig21_income_density_2016.png   — KDE by HH head gender (2016)
+  fig21b_income_region_2016.png   — KDE by macro-region (2016)
+  fig31_income_region_box_2016.png — Box plot income by region (2016)
+  fig61_density_comparison.png    — KDE 2016 vs 2018 (real terms)
+
+  subnational_poverty.csv         — State-level poverty rates 2016+2018
+    adm1_code, adm1_name, poverty_rate_2016/2018 (alimentaria mean),
+    extreme_pov_2016/2018 (redundant — both alimentaria, see code note),
+    pop_weighted_2016/2018, n_obs_2016/2018, small_sample_flag
+
+------------------------------------------------------------
+KNOWN ISSUES / DELIBERATE FLAWS (teaching artifact)
+------------------------------------------------------------
+
+  1. concentradohogar loaded 3 times (I.A, I.D, IV). Should use tempfile.
+  2. Per-capita income named inc_pc (I.A), ingreso_pc (I.D), income_percap (2018).
+  3. Years-of-education computed twice (I.B and IV). Identical logic.
+  4. 2018 poverty lines defined as locals mid-script, not at top.
+  5. No _merge checks in 2016 merges (tab _merge added in 2018 but not acted on).
+  6. poverty_rate and extreme_pov in CSV both use pov_ali (both == alimentaria).
+  7. Sheet0_Dashboard written last — appears as last workbook tab in Excel.
+  8. Dead code: commented-out "use $data_2016\poblacion.dta" (global undefined).
+  9. Hardcoded output path in subnational CSV export (should use $out_dir).
+ 10. CPI deflator 1.085 hardcoded inline (no source reference in comments).
+
+============================================================
