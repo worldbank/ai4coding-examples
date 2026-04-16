@@ -1,4 +1,4 @@
-# wbTemplate
+# ai2coding: examples
 
 This repository contains the source code and example materials that supplement the main course content for **AI for Coding**.
 
